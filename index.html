@@ -21,8 +21,7 @@
 		<div class="panel-heading"><a href="{{feedUrl}}">{{title}}</a></div>
 		<div class="panel-body">
 		{{#each entries}}
-			<a href="{{link}}">{{title}}</a>
-			<p>{{contentSnippet}}</p>
+			<small><a href="{{link}}">{{title}}</a><p>{{contentSnippet}}</p></small>
 		{{/each}}
 		</div>
 	</div>
@@ -30,59 +29,56 @@
 <script type="text/javascript" charset="utf-8">
 
 function go() {
-
+	$columns = 4;
 	$sources = [
 "https://isc.sans.edu/rssfeed_full.xml",
-
-"http://2600.sk/rss.xml",
+"https://news.ycombinator.com/rss",
+"http://www.debian.org/security/dsa-long",
+"http://www.exploit-db.com/rss.xml",
+"https://www.csirt.cz/rss/news/security/",
+"https://www.csirt.gov.sk/rss?",
+"http://rss.root.cz/clanky",
+"http://rss.root.cz/zpravicky/",
+"http://rss.zdrojak.cz/clanky/",
+"http://www.abclinuxu.cz/auto/abc.rss",
+"http://www.abclinuxu.cz/auto/zpravicky.rss",
 "http://blog.didierstevens.com/feed/",
+"https://github.com/DanMcInerney.atom",
 "http://blog.spoofed.org/feeds/posts/default/",
-"http://feeds2.feedburner.com/SansApplicationSecurityBlog",
 "http://feeds.feedburner.com/JonHartsBlog",
 "http://feeds.feedburner.com/ThierryZoller?format=xml",
 "http://feeds.feedburner.com/typepad/the_security_practice",
 "http://gistrss.appspot.com/feed/taviso",
-"http://identitymeme.org/feed/",
 "http://integriography.wordpress.com/feed/",
 "http://lcamtuf.blogspot.com/feeds/posts/default",
-"http://nvd.nist.gov/download/nvd-rss-analyzed.xml",
-"http://nvd.nist.gov/download/nvd-rss.xml",
 "http://packetstormsecurity.org/misc.xml",
 "http://packetstormsecurity.org/tools.xml",
 "http://partners.userland.com/nytRss/technology.xml",
 "http://rss.packetstormsecurity.com/files/tags/advisory/",
-"http://rss.root.cz/clanky",
-"http://rss.root.cz/zpravicky/",
-"http://rss.zdrojak.cz/clanky/",
 "https://digi.ninja/rss.xml",
 "http://seclists.org/rss/fulldisclosure.rss",
-"https://github.com/DanMcInerney.atom",
-"https://news.ycombinator.com/rss",
-"https://www.csirt.cz/rss/news/security/",
-"https://www.csirt.gov.sk/rss?",
 "https://www.thc.org/rss.xml.php",
 "http://wireless-comm.blogspot.com/feeds/posts/default",
-"http://www.abclinuxu.cz/auto/abc.rss",
-"http://www.abclinuxu.cz/auto/zpravicky.rss",
+"http://identitymeme.org/feed/",
+"http://feeds2.feedburner.com/SansApplicationSecurityBlog",
 "http://www.debian-linux.cz/feed/",
-"http://www.debian.org/security/dsa-long",
 "http://www.educatedguesswork.org/atom.xml",
-"http://www.exploit-db.com/rss.xml",
 "http://www.fi.muni.cz/%7Ekas/blog/index.cgi/index.rss",
 "http://www.harmj0y.net/blog/feed/",
-"http://www.liferay.com/en/about-us/news/-/blogs/rss",
+"http://www.willhackforsushi.com/?feed=rss",
 "http://www.securityfocus.com/rss/news.xml",
 "http://www.securityfocus.com/rss/vulnerabilities.xml",
-"http://www.willhackforsushi.com/?feed=rss"
+"http://nvd.nist.gov/download/nvd-rss-analyzed.xml",
+"http://nvd.nist.gov/download/nvd-rss.xml",
+"http://2600.sk/rss.xml"
 ];
 	$handles = [];
-	for($i = 0; $i < $sources.length; $i = $i+3) {
-		$out = "";
-		$out += '<div class="col-md-4"><div id="'+ "rssX"+$i +'">loading '+$sources[$i]+'</div></div>';
-		$out += '<div class="col-md-4"><div id="'+ "rssX"+($i+1) +'">loading '+$sources[$i+1]+'</div></div>';
-		$out += '<div class="col-md-4"><div id="'+ "rssX"+($i+2) +'">loading '+$sources[$i+2]+'</div></div>';
-
-		$('<div class="row">'+$out+'</div>').appendTo("#allfeeds");
+	$outs = [];
+	for($i = 0; $i < $sources.length; $i = $i+$columns) {
+		$outs.push( '<div class="col-md-'+ (12/$columns) +'"><div id="'+ "rssX"+$i +'">loading '+$sources[$i]+'</div></div>' );
+	}
+	while( $outs.length > 0 ) {
+		$('<div class="row">'+ $outs.splice(0,$columns).join("") +'</div>').appendTo("#allfeeds");
 	}
 
 	for($i = 0; $i < $sources.length; $i++) {
@@ -129,7 +125,7 @@ $(document).ready(go);
 	<div class="jumbotron" id="about">
 		<h2>ccao rss feeds</h2>
 	        <p class="lead">
-		Stay up-to-date ...
+		Stay up-to-date ... IRCNet #ccao
 		<h3>Acknowledgement</h3>
 		<p>
 		Computational resources were provided by the MetaCentrum under the program
