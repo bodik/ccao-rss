@@ -48,7 +48,11 @@ HandlebaRss.prototype.captureMultiAndRender = function(data){
 };
 
 HandlebaRss.prototype.captureFeed = function(data){
-  this.feed = data.responseData.feed;
+  try {
+    this.feed = data.responseData.feed;
+  } catch(err) {
+    this.feed = { feedUrl: this.feedUrl, title: this.feedUrl+" error loading feed", link: this.feedUrl, author: this.feedUrl, description: "", type: "atom10", entries: [] };
+  }
 };
 
 HandlebaRss.prototype.render = function(){
