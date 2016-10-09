@@ -11,7 +11,12 @@
 		<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
 		<script src="bootstrap/js/bootstrap.min.js"></script>
 
-
+		<style>
+			.panel-heading, .panel-body {
+				padding: 0.2em;
+				margin: 0;
+			}
+		</style>
 	</head>
 <body>
 
@@ -19,11 +24,11 @@
 <script id="feed-template" type="text/x-handlebars-template">
 	<div class="panel panel-default">
 		<div class="panel-heading"><a href="{{feedUrl}}">{{title}}</a></div>
-		<div class="panel-body">
+		<div class="panel-body"><ul>
 		{{#each entries}}
-			<small><a href="{{link}}">{{title}}</a><p>{{contentSnippet}}</p></small>
+			<li><a href="{{link}}">{{title}}</a><p><small>{{contentSnippet}}</small></p></li>
 		{{/each}}
-		</div>
+		</ul></div>
 	</div>
 </script>
 <script type="text/javascript" charset="utf-8">
@@ -31,47 +36,49 @@
 function go() {
 	$columns = 4;
 	$sources = [
-"https://isc.sans.edu/rssfeed_full.xml",
-"https://news.ycombinator.com/rss",
-"http://www.debian.org/security/dsa-long",
-"http://www.exploit-db.com/rss.xml",
-"https://www.csirt.cz/rss/news/security/",
-"https://www.csirt.gov.sk/rss?",
-"http://rss.root.cz/clanky",
-"http://rss.root.cz/zpravicky/",
-"http://rss.zdrojak.cz/clanky/",
-"http://www.abclinuxu.cz/auto/abc.rss",
-"http://www.abclinuxu.cz/auto/zpravicky.rss",
-"http://blog.didierstevens.com/feed/",
-"https://github.com/DanMcInerney.atom",
-"http://blog.spoofed.org/feeds/posts/default/",
-"http://feeds.feedburner.com/JonHartsBlog",
-"http://feeds.feedburner.com/ThierryZoller?format=xml",
-"http://feeds.feedburner.com/typepad/the_security_practice",
-"http://gistrss.appspot.com/feed/taviso",
-"http://integriography.wordpress.com/feed/",
-"http://lcamtuf.blogspot.com/feeds/posts/default",
-"http://packetstormsecurity.org/misc.xml",
-"http://packetstormsecurity.org/tools.xml",
-"http://partners.userland.com/nytRss/technology.xml",
-"http://rss.packetstormsecurity.com/files/tags/advisory/",
-"https://digi.ninja/rss.xml",
-"http://seclists.org/rss/fulldisclosure.rss",
-"https://www.thc.org/rss.xml.php",
-"http://wireless-comm.blogspot.com/feeds/posts/default",
-"http://identitymeme.org/feed/",
-"http://feeds2.feedburner.com/SansApplicationSecurityBlog",
-"http://www.debian-linux.cz/feed/",
-"http://www.educatedguesswork.org/atom.xml",
-"http://www.fi.muni.cz/%7Ekas/blog/index.cgi/index.rss",
-"http://www.harmj0y.net/blog/feed/",
-"http://www.willhackforsushi.com/?feed=rss",
-"http://www.securityfocus.com/rss/news.xml",
-"http://www.securityfocus.com/rss/vulnerabilities.xml",
-"http://nvd.nist.gov/download/nvd-rss-analyzed.xml",
-"http://nvd.nist.gov/download/nvd-rss.xml",
-"http://2600.sk/rss.xml"
-];
+		"https://isc.sans.edu/rssfeed_full.xml",
+		"https://news.ycombinator.com/rss",
+		"http://www.debian.org/security/dsa-long",
+		"http://www.exploit-db.com/rss.xml",
+		"https://www.csirt.cz/rss/news/security/",
+		"https://www.csirt.gov.sk/rss?",
+		"http://rss.root.cz/clanky",
+		"http://rss.root.cz/zpravicky/",
+		"http://rss.zdrojak.cz/clanky/",
+		"http://www.abclinuxu.cz/auto/abc.rss",
+		"http://www.abclinuxu.cz/auto/zpravicky.rss",
+
+		"http://blog.didierstevens.com/feed/",
+		"https://github.com/DanMcInerney.atom",
+		"http://blog.spoofed.org/feeds/posts/default/",
+		"http://feeds.feedburner.com/JonHartsBlog",
+		"http://feeds.feedburner.com/ThierryZoller?format=xml",
+		"http://feeds.feedburner.com/typepad/the_security_practice",
+		"http://gistrss.appspot.com/feed/taviso",
+		"http://integriography.wordpress.com/feed/",
+		"http://lcamtuf.blogspot.com/feeds/posts/default",
+		"http://partners.userland.com/nytRss/technology.xml",
+		"http://rss.packetstormsecurity.com/files/tags/advisory/",
+		"https://digi.ninja/rss.xml",
+		"http://seclists.org/rss/fulldisclosure.rss",
+		"https://www.thc.org/rss.xml.php",
+		"http://wireless-comm.blogspot.com/feeds/posts/default",
+		"http://identitymeme.org/feed/",
+		"http://feeds2.feedburner.com/SansApplicationSecurityBlog",
+		"http://www.educatedguesswork.org/atom.xml",
+		"http://www.fi.muni.cz/%7Ekas/blog/index.cgi/index.rss",
+		"http://www.harmj0y.net/blog/feed/",
+		"http://www.willhackforsushi.com/?feed=rss",
+
+		"http://www.debian-linux.cz/feed/",
+		"http://packetstormsecurity.org/misc.xml",
+		"http://packetstormsecurity.org/tools.xml",
+		"http://www.securityfocus.com/rss/news.xml",
+		"http://www.securityfocus.com/rss/vulnerabilities.xml",
+		"http://nvd.nist.gov/download/nvd-rss-analyzed.xml",
+		"http://nvd.nist.gov/download/nvd-rss.xml",
+		"http://2600.sk/rss.xml"
+	];
 
 	$handles = [];
 	$outs = [];
