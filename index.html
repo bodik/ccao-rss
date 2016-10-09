@@ -72,13 +72,14 @@ function go() {
 "http://nvd.nist.gov/download/nvd-rss.xml",
 "http://2600.sk/rss.xml"
 ];
+
 	$handles = [];
 	$outs = [];
-	for($i = 0; $i < $sources.length; $i = $i+$columns) {
+	for($i = 0; $i < $sources.length; $i++) {
 		$outs.push( '<div class="col-md-'+ (12/$columns) +'"><div id="'+ "rssX"+$i +'">loading '+$sources[$i]+'</div></div>' );
 	}
 	while( $outs.length > 0 ) {
-		$('<div class="row">'+ $outs.splice(0,$columns).join("") +'</div>').appendTo("#allfeeds");
+		$('<div class="row">'+ $outs.splice(0, $columns ).join("") +'</div>').appendTo("#allfeeds");
 	}
 
 	for($i = 0; $i < $sources.length; $i++) {
