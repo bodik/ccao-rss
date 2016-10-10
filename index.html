@@ -1,10 +1,12 @@
 <html>
 	<head>
+
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    		<title>#ccao.cz rss feed (based on Octo-Labs/HandlebaRss)</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<script type="text/javascript" src="lib/jquery.js"></script>
 		<script type="text/javascript" src="lib/handlebars-v1.3.0.js"></script>
-    		<!-- include source files here... -->
 		<script type="text/javascript" src="src/HandlebaRss.js"></script>
 
 		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
@@ -12,29 +14,43 @@
 		<script src="bootstrap/js/bootstrap.min.js"></script>
 
 		<style>
-			.panel-heading, .panel-body {
-				padding: 0.2em;
-				margin: 0;
+			[class*="col-"] {
+				padding-right: 1px;
+				padding-left: 1px;
+			}
+			ul {
+				padding: 0 3px 0 3px;
+			}
+			.list-group-item {
+				padding: 0.3em;
+			}
+			.list-group-item.myhead {
+				background-color: #f5f5f5;
+			}
+			.list-group-item.myhead a {
+				color: black;
+			}
+			.list-group-item.myitem div {
+				margin-left: 10px;
 			}
 		</style>
+
+    		<title>#ccao.cz rss feed (based on Octo-Labs/HandlebaRss)</title>
 	</head>
 <body>
 
 
 <script id="feed-template" type="text/x-handlebars-template">
-	<div class="panel panel-default">
-		<div class="panel-heading"><a href="{{feedUrl}}">{{title}}</a></div>
-		<div class="panel-body"><ul>
+	<ul>
+		<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
 		{{#each entries}}
-			<li><a href="{{link}}">{{title}}</a><p><small>{{contentSnippet}}</small></p></li>
+			<li class="list-group-item myitem"><a href="{{link}}" target="_blank">{{title}}</a><div><small>{{contentSnippet}}</small></div></li>
 		{{/each}}
-		</ul></div>
-	</div>
+	</ul>
 </script>
 <script type="text/javascript" charset="utf-8">
-
 function go() {
-	$columns = 4;
+	$columns = 2;
 	$sources = [
 		"https://isc.sans.edu/rssfeed_full.xml",
 		"https://news.ycombinator.com/rss",
