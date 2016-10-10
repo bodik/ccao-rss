@@ -1,4 +1,4 @@
-function HandlebaRss(feedUrl, template, destination, multiLimit, singleLimit=10) {
+function HandlebaRss(feedUrl, template, destination, multiLimit, singleLimit) {
   if(feedUrl instanceof Array){
     this.feedUrls = feedUrl;
   }else{

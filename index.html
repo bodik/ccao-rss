@@ -104,7 +104,7 @@ function go() {
 
 	for($i = 0; $i < $sources.length; $i++) {
 		$outputdiv = "rssX"+$i;
-		$handles[$i] = new HandlebaRss($sources[$i]["url"], (  $sources[$i]["template"] || "#feed-template"), "#"+$outputdiv, 0, $sources[$i]["items"]);
+		$handles[$i] = new HandlebaRss($sources[$i]["url"], (  $sources[$i]["template"] || "#feed-template"), "#"+$outputdiv, 0, ($sources[$i]["items"]||10));
 		$handles[$i].init();
 	}	
 
