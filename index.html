@@ -30,6 +30,10 @@
 			.list-group-item.myitem div {
 				margin-top: 10px;
 				margin-left: 10px;
+				color: gray;
+			}
+			.pdate {
+				color: #cccccc;
 			}
 		</style>
 
@@ -43,7 +47,7 @@
 		<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
 		{{#each entries}}
 			<li class="list-group-item myitem">
-				<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small text-muted">{{pDate}}</span>
+				<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
 				<div><small>{{contentSnippet}}</small></div>
 			</li>
 		{{/each}}
@@ -132,7 +136,7 @@ $(document).ready(go);
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">#ccao rss feeds</a>
+			<a class="navbar-brand" href="#">#ccao.cz rss feeds</a>
 		</div>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="nav navbar-nav">
