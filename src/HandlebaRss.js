@@ -58,6 +58,11 @@ HandlebaRss.prototype.captureFeed = function(data){
 HandlebaRss.prototype.render = function(){
   var source   = $(this.template).html();
   var template = Handlebars.compile(source);
+  for(i=0; i<this.feed.entries.length; i++){
+	//this.feed.entries[i].pDate = new Date(this.feed.entries[i].publishedDate).toString('yyyy-MM-dd');
+	this.feed.entries[i].pDate = new Date(this.feed.entries[i].publishedDate).toJSON().substr(0,16);
+	console.log(this.feed.entries[i]);
+  }
   var html    = template(this.feed);
   $(this.destination).html(html);
 };
@@ -68,7 +73,7 @@ HandlebaRss.prototype.renderMulti = function(){
   var template = Handlebars.compile(source);
   var entries = this.coalesseFeeds();
   var context = { entries : entries };
-  
+
   var html    = template(context);
   $(this.destination).html(html);
 };
