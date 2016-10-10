@@ -47,20 +47,20 @@
 
 <script type="text/javascript" charset="utf-8">
 function go() {
-	$columns = 3;
+	$columns = 4;
 	$sources = [
                 { "url": "https://isc.sans.edu/rssfeed_full.xml", },
                 { "url": "https://news.ycombinator.com/rss", "template": "#feed-template-compact", "items": 20 },
-                { "url": "http://www.debian.org/security/dsa-long", },
-                { "url": "http://www.exploit-db.com/rss.xml", },
+                { "url": "https://www.debian.org/security/dsa-long", },
+                { "url": "https://www.exploit-db.com/rss.xml", },
                 { "url": "https://www.csirt.cz/rss/news/security/", },
-                { "url": "https://www.csirt.gov.sk/rss?", },
-                { "url": "http://rss.root.cz/zpravicky/", },
-                { "url": "http://www.abclinuxu.cz/auto/zpravicky.rss", },
-                { "url": "http://www.lupa.cz/rss/aktuality", },
+                { "url": "https://rss.root.cz/zpravicky/", },
                 { "url": "http://seclists.org/rss/fulldisclosure.rss", },
-                { "url": "http://rss.root.cz/clanky", },
-                { "url": "http://www.abclinuxu.cz/auto/abc.rss", },
+                { "url": "https://www.csirt.gov.sk/rss?", },
+                { "url": "https://www.abclinuxu.cz/auto/zpravicky.rss", },
+                { "url": "https://rss.root.cz/clanky", },
+                { "url": "https://www.abclinuxu.cz/auto/abc.rss", },
+                { "url": "http://www.lupa.cz/rss/aktuality", },
                 { "url": "http://www.lupa.cz/rss/clanky", },
 
                 { "url": "http://rss.zdrojak.cz/clanky/", },
@@ -70,9 +70,7 @@ function go() {
                 { "url": "http://integriography.wordpress.com/feed/", },
                 { "url": "http://lcamtuf.blogspot.com/feeds/posts/default", },
                 { "url": "https://digi.ninja/rss.xml", },
-                { "url": "http://wireless-comm.blogspot.com/feeds/posts/default", },
                 { "url": "http://identitymeme.org/feed/", },
-                { "url": "http://www.educatedguesswork.org/atom.xml", },
                 { "url": "http://www.fi.muni.cz/%7Ekas/blog/index.cgi/index.rss", },
                 { "url": "http://www.harmj0y.net/blog/feed/", },
                 { "url": "http://www.willhackforsushi.com/?feed=rss", },
@@ -83,10 +81,11 @@ function go() {
                 { "url": "http://packetstormsecurity.org/misc.xml", },
                 { "url": "http://packetstormsecurity.org/tools.xml", },
 
+                { "url": "http://www.educatedguesswork.org/atom.xml", },
+                { "url": "http://wireless-comm.blogspot.com/feeds/posts/default", },
                 { "url": "http://www.securityfocus.com/rss/news.xml", },
                 { "url": "http://www.securityfocus.com/rss/vulnerabilities.xml", },
                 { "url": "http://nvd.nist.gov/download/nvd-rss-analyzed.xml", },
-                { "url": "http://nvd.nist.gov/download/nvd-rss.xml", },
                 { "url": "http://2600.sk/rss.xml", },
                 { "url": "https://www.thc.org/rss.xml.php", },
                 { "url": "http://feeds.feedburner.com/typepad/the_security_practice", },
