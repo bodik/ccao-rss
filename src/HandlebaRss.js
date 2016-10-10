@@ -1,4 +1,4 @@
-function HandlebaRss(feedUrl,template,destination,multiLimit){
+function HandlebaRss(feedUrl, template, destination, multiLimit, singleLimit=10) {
   if(feedUrl instanceof Array){
     this.feedUrls = feedUrl;
   }else{
@@ -7,6 +7,7 @@ function HandlebaRss(feedUrl,template,destination,multiLimit){
   this.template = template;
   this.destination = destination;
   this.multiLimit = multiLimit;
+  this.singleLimit = singleLimit;
   //this.retrieveUrl();
 }
 
@@ -31,7 +32,7 @@ HandlebaRss.prototype.retrieveUrl = function(url,callback){
   var protocol = document.location.protocol;
   if(protocol == 'file:'){ protocol = 'http:'}
   $.ajax({
-    url: protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&callback=?&q=' + encodeURIComponent(url),
+    url: protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num='+this.singleLimit+'&callback=?&q=' + encodeURIComponent(url),
     dataType: 'json',
     success: callback
   });
