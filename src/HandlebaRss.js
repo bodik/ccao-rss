@@ -61,6 +61,7 @@ HandlebaRss.prototype.render = function(){
   var template = Handlebars.compile(source);
   for(i=0; i<this.feed.entries.length; i++){
 	this.feed.entries[i].pDate = new Date(this.feed.entries[i].publishedDate).toJSON().substr(0,16);
+	this.feed.entries[i].id = Math.random().toString(36).substring(2);
   }
   var html    = template(this.feed);
   $(this.destination).html(html);

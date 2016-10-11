@@ -18,6 +18,9 @@
 				padding-right: 1px;
 				padding-left: 1px;
 			}
+			a:visited {
+				color: #666666;
+			}
 			ul {
 				padding: 0 3px 0 3px;
 			}
@@ -106,10 +109,9 @@ function go() {
 		$outputdiv = "rssX"+$i;
 		$handles[$i] = new HandlebaRss($sources[$i]["url"], (  $sources[$i]["template"] || "#feed-template"), "#"+$outputdiv, 0, ($sources[$i]["items"]||10));
 		$handles[$i].init();
-	}	
+	}
 
 }
-
 
 
 $(document).ready(go);
@@ -120,8 +122,9 @@ $(document).ready(go);
 		<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
 		{{#each entries}}
 			<li class="list-group-item myitem">
+				<small><a href="#collapse-{{id}}" data-toggle="collapse"><span class="glyphicon glyphicon-plus"></span></a></small>
 				<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
-				<div><small>{{contentSnippet}}</small></div>
+				<div id="collapse-{{id}}" class="collapse"><small>{{contentSnippet}}</small></div>
 			</li>
 		{{/each}}
 	</ul>
