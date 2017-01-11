@@ -58,6 +58,7 @@ HandlebaRss.prototype.render = function(){
 	this.feed.entries[i].pDate = this.feed.entries[i].publishedDate ? new Date(this.feed.entries[i].publishedDate).toJSON().substr(0,16) : "";
 	this.feed.entries[i].id = Math.random().toString(36).substring(2);
   }
+  this.feed.entries = this.feed.entries.slice(0,this.singleLimit);
   var html    = template(this.feed);
   $(this.destination).html(html);
 };
