@@ -29,13 +29,8 @@ HandlebaRss.prototype.addFeedData = function(data){
 }
 
 HandlebaRss.prototype.retrieveUrl = function(url,callback){
-  var protocol = document.location.protocol;
-  if(protocol == 'file:'){ protocol = 'http:'}
-  $.ajax({
-    url: protocol + '//ajax.googleapis.com/ajax/services/feed/load?v=1.0&num='+this.singleLimit+'&callback=?&q=' + encodeURIComponent(url),
-    dataType: 'json',
-    success: callback
-  });
+  feednami.setPublicApiKey('563940caaf44f6ff5659959d16af487232d827336b20e60d8ddecbf38a10e505');
+  feednami.loadGoogleFormat(url, callback);
 };
 
 HandlebaRss.prototype.captureAndRender = function(data){
@@ -50,7 +45,7 @@ HandlebaRss.prototype.captureMultiAndRender = function(data){
 
 HandlebaRss.prototype.captureFeed = function(data){
   try {
-    this.feed = data.responseData.feed;
+    this.feed = data.feed;
   } catch(err) {
     this.feed = { feedUrl: this.feedUrl, title: this.feedUrl+" error loading feed", link: this.feedUrl, author: this.feedUrl, description: "", type: "atom10", entries: [] };
   }
