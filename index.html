@@ -54,6 +54,7 @@
 function go() {
 	$columns = 4;
 	$sources = [
+		// organization
                 { "url": "https://isc.sans.edu/rssfeed_full.xml", },
                 { "url": "https://news.ycombinator.com/rss", "template": "#feed-template-compact", "items": 20 },
                 { "url": "https://www.debian.org/security/dsa-long", },
@@ -68,10 +69,10 @@ function go() {
                 { "url": "http://www.lupa.cz/rss/aktuality", },
                 { "url": "http://www.lupa.cz/rss/clanky", },
 
+		// singles
                 { "url": "https://rss.zdrojak.cz/feed/", },
                 { "url": "https://blog.didierstevens.com/feed/", },
                 { "url": "https://github.com/DanMcInerney.atom", },
-                { "url": "https://gistrss.appspot.com/feed/taviso", },
                 { "url": "https://integriography.wordpress.com/feed/", },
                 { "url": "https://lcamtuf.blogspot.com/feeds/posts/default", },
                 { "url": "https://digi.ninja/rss.xml", },
@@ -83,17 +84,26 @@ function go() {
                 { "url": "https://www.debian-linux.cz/feed/", },
                 { "url": "https://deadcode.me/feed.xml", },
                 { "url": "http://gk2.sk/atom.xml", },
+                { "url": "https://guidovranken.wordpress.com/feed/", },
+                { "url": "https://pentestlab.blog/feed/", },
 
+		// corporations
                 { "url": "https://www.reddit.com/r/netsec.rss", },
                 { "url": "https://blogs.microsoft.com/microsoftsecure/feed/", },
                 { "url": "https://www.toolswatch.org/feed/", },
                 { "url": "https://news.hitb.org/rss.xml", },
-                { "url": "https://feeds.feedburner.com/CiscoBlogSecurity?format=xml", },
-
                 { "url": "https://rss.packetstormsecurity.com/files/tags/advisory/", },
-                { "url": "https://packetstormsecurity.org/misc.xml", },
-                { "url": "https://packetstormsecurity.org/tools.xml", },
+                { "url": "https://packetstormsecurity.com/misc.xml", },
+                { "url": "https://packetstormsecurity.com/tools.xml", },
+                { "url": "https://packetstormsecurity.com/tools.xml", },
+                { "url": "https://blog.rapid7.com/rss/",},
+                { "url": "http://feeds.arstechnica.com/arstechnica/security",},
+                { "url": "http://feeds.arstechnica.com/arstechnica/technology-lab",},
+                { "url": "https://feeds.feedburner.com/CiscoBlogSecurity?format=xml", },
+                { "url": "https://tools.cisco.com/security/center/psirtrss20/AlertRSS.xml",},
+                { "url": "https://tools.cisco.com/security/center/psirtrss20/CiscoSecurityAdvisory.xml",},
 
+		// misc
                 { "url": "http://www.educatedguesswork.org/atom.xml", },
                 { "url": "https://feeds.feedburner.com/blogspot/SrLV", },
                 { "url": "http://www.securityfocus.com/rss/news.xml", },
@@ -103,8 +113,14 @@ function go() {
                 { "url": "https://feeds.feedburner.com/typepad/the_security_practice", },
                 { "url": "https://feedpress.me/thierryzoller", },
                 { "url": "https://contagiodump.blogspot.com/feeds/posts/default", },
-                { "url": "http://blog.spoofed.org/feeds/posts/default/" },
-                { "url": "http://2600.sk/rss.xml", }
+                { "url": "https://2600.com/rss.xml", },
+                { "url": "https://www.malware-traffic-analysis.net/blog-entries.rss", },
+                { "url": "https://blog.malwarebytes.com/feed/", },
+
+                //twitter
+                { "url": "https://twitrss.me/twitter_user_to_rss/?user=ccdcoe",},
+                { "url": "https://twitrss.me/twitter_user_to_rss/?user=grsecurity",},
+                { "url": "https://twitrss.me/twitter_user_to_rss/?user=taviso",}
 	];
 
 	$handles = [];
