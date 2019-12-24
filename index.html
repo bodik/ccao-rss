@@ -71,10 +71,24 @@
 </ul>
 </script>
 
+<script id="feed_expand-template" type="text/x-handlebars-template">
+<ul>
+	<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
+	{{#each entries}}
+		<li class="list-group-item myitem">
+			<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
+			<div><small>{{contentSnippet}}</small></div>
+		</li>
+	{{/each}}
+</ul>
+</script>
+
+
 <script type="text/javascript">
 	// setup and config
 	var feed_hbs = Handlebars.compile(document.getElementById('feed-template').innerHTML);
 	var feed_compact_hbs = Handlebars.compile(document.getElementById('feed_compact-template').innerHTML);
+	var feed_expand_hbs = Handlebars.compile(document.getElementById('feed_expand-template').innerHTML);
 
 	var sources = [
 		// organization
@@ -85,66 +99,64 @@
                 {"url": "https://www.csirt.cz/rss/news/security/"},
                 {"url": "https://www.root.cz/rss/zpravicky/"},
                 {"url": "http://seclists.org/rss/fulldisclosure.rss"},
-                {"url": "https://www.csirt.gov.sk/rss?"},
                 {"url": "https://www.abclinuxu.cz/auto/zpravicky.rss"},
                 {"url": "https://www.root.cz/rss/clanky/"},
                 {"url": "https://www.abclinuxu.cz/auto/abc.rss"},
-                {"url": "http://www.lupa.cz/rss/aktuality"},
-                {"url": "http://www.lupa.cz/rss/clanky"},
+                {"url": "http://www.lupa.cz/rss/clanky", "items": 15},
 
 		// singles
                 {"url": "https://rss.zdrojak.cz/feed/"},
                 {"url": "https://blog.didierstevens.com/feed/"},
                 {"url": "https://github.com/DanMcInerney.atom"},
-                {"url": "https://integriography.wordpress.com/feed/"},
-                {"url": "https://lcamtuf.blogspot.com/feeds/posts/default"},
                 {"url": "https://digi.ninja/rss.xml"},
-                {"url": "http://identitymeme.org/feed/"},
-                {"url": "https://www.fi.muni.cz/%7Ekas/blog/index.cgi/index.rss"},
                 {"url": "https://www.harmj0y.net/blog/feed/"},
-                {"url": "http://www.willhackforsushi.com/?feed=rss"},
-                {"url": "https://feeds2.feedburner.com/SansApplicationSecurityBlog"},
-                {"url": "https://www.debian-linux.cz/feed/"},
-                {"url": "https://deadcode.me/feed.xml"},
-                {"url": "http://gk2.sk/atom.xml"},
+                {"url": "https://rusnak.io/atom.xml"},
                 {"url": "https://guidovranken.wordpress.com/feed/"},
                 {"url": "https://pentestlab.blog/feed/"},
 
 		// corporations
                 {"url": "https://www.reddit.com/r/netsec.rss"},
-                {"url": "https://blogs.microsoft.com/microsoftsecure/feed/"},
+                {"url": "https://www.microsoft.com/security/blog/feed/"},
                 {"url": "https://www.toolswatch.org/feed/"},
                 {"url": "https://news.hitb.org/rss.xml"},
                 {"url": "https://rss.packetstormsecurity.com/files/tags/advisory/"},
                 {"url": "https://packetstormsecurity.com/misc.xml"},
                 {"url": "https://packetstormsecurity.com/tools.xml"},
-                {"url": "https://packetstormsecurity.com/tools.xml"},
                 {"url": "https://blog.rapid7.com/rss/"},
                 {"url": "http://feeds.arstechnica.com/arstechnica/security"},
                 {"url": "http://feeds.arstechnica.com/arstechnica/technology-lab"},
                 {"url": "https://feeds.feedburner.com/CiscoBlogSecurity?format=xml"},
-                {"url": "https://tools.cisco.com/security/center/psirtrss20/AlertRSS.xml"},
                 {"url": "https://tools.cisco.com/security/center/psirtrss20/CiscoSecurityAdvisory.xml"},
+                {"url": "http://feeds.trendmicro.com/TrendMicroSimplySecurity"},
 
 		// misc
-                {"url": "http://www.educatedguesswork.org/atom.xml"},
-                {"url": "https://feeds.feedburner.com/blogspot/SrLV"},
-                {"url": "http://www.securityfocus.com/rss/news.xml"},
+                {"url": "https://www.cvedetails.com/vulnerability-feed.php?vendor_id=0&product_id=0&version_id=0&orderby=1&cvssscoremin=7", "template": feed_expand_hbs},
                 {"url": "http://www.securityfocus.com/rss/vulnerabilities.xml"},
                 {"url": "https://nvd.nist.gov/download/nvd-rss-analyzed.xml"},
-                {"url": "https://www.thc.org/rss.xml.php"},
                 {"url": "https://feeds.feedburner.com/typepad/the_security_practice"},
-                {"url": "https://feedpress.me/thierryzoller"},
                 {"url": "https://contagiodump.blogspot.com/feeds/posts/default"},
-                {"url": "https://2600.com/rss.xml"},
                 {"url": "https://www.malware-traffic-analysis.net/blog-entries.rss"},
                 {"url": "https://blog.malwarebytes.com/feed/"},
+                {"url": "https://python.libhunt.com/newsletter/feed"},
 
-                //twitter
-		{"url": "https://queryfeed.net/tw?q=%23pentest", "items": 30},
+                // twitter
+		{"url": "https://queryfeed.net/tw?q=%23pentest", "template": feed_expand_hbs, "items": 30},
                 {"url": "https://twitrss.me/twitter_user_to_rss/?user=ccdcoe"},
                 {"url": "https://twitrss.me/twitter_user_to_rss/?user=grsecurity"},
-                {"url": "https://twitrss.me/twitter_user_to_rss/?user=taviso"}
+                {"url": "https://twitrss.me/twitter_user_to_rss/?user=taviso"},
+
+		// old
+                //{"url": "https://integriography.wordpress.com/feed/"},
+                //{"url": "https://lcamtuf.blogspot.com/feeds/posts/default"},
+                //{"url": "http://identitymeme.org/feed/"},
+                //{"url": "https://www.fi.muni.cz/%7Ekas/blog/index.cgi/index.rss"},
+                //{"url": "http://www.willhackforsushi.com/?feed=rss"},
+                //{"url": "https://feeds2.feedburner.com/SansApplicationSecurityBlog"},
+                //{"url": "https://deadcode.me/feed.xml"},
+                //{"url": "http://www.educatedguesswork.org/atom.xml"},
+                //{"url": "https://feeds.feedburner.com/blogspot/SrLV"},
+                //{"url": "https://feedpress.me/thierryzoller"},
+                //{"url": "https://2600.com/rss.xml"},
 	];
 
 	// code
