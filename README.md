@@ -1,4 +1,3 @@
-# HandlebaRss
+# #ccao rss aggregator
 
-A small RSS viewer for displaying remote feeds on static sites. Forked from [http://octo-labs.github.io/HandlebaRss/](http://octo-labs.github.io/HandlebaRss/)
-
+Inspired by [http://octo-labs.github.io/HandlebaRss/](http://octo-labs.github.io/HandlebaRss/) but reimplemented from scratch with a fraction of code (and features).
