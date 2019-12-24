@@ -1,62 +1,85 @@
 <html>
-	<head>
 
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
+	<title>#ccao rss feeds aggregator</title>
 
-		<script type="text/javascript" src="lib/jquery.js"></script>
-		<script type="text/javascript" src="lib/handlebars-v1.3.0.js"></script>
-		<script type="text/javascript" src="src/HandlebaRss.js"></script>
+	<script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
 
-		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
-		<script src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js"></script>
 
-		<style>
-			[class*="col-"] {
-				padding-right: 1px;
-				padding-left: 1px;
-			}
-			a:visited {
-				color: #666666;
-			}
-			ul {
-				padding: 0 3px 0 3px;
-			}
-			.list-group-item.myhead {
-				background-color: #f5f5f5;
-			}
-			.list-group-item.myhead a {
-				color: black;
-			}
-			.list-group-item.myitem div {
-				margin-top: 10px;
-				margin-left: 10px;
-				color: gray;
-			}
-			.pdate {
-				color: #cccccc;
-			}
-		</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    		<title>#ccao rss feed (based on Octo-Labs/HandlebaRss)</title>
-	</head>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.min.js"></script>
+
+	<style>
+		[class*="col-"] {
+			padding-right: 1px;
+			padding-left: 1px;
+		}
+		a:visited {
+			color: #666666;
+		}
+		ul {
+			padding: 0 3px 0 3px;
+		}
+		.list-group-item.myhead {
+			background-color: #f5f5f5;
+		}
+		.list-group-item.myhead a {
+			color: black;
+		}
+		.list-group-item.myitem div {
+			margin-top: 10px;
+			margin-left: 10px;
+			color: gray;
+		}
+		.pdate {
+			color: #cccccc;
+		}
+	</style>
+</head>
+
 <body>
 
+<script id="feed-template" type="text/x-handlebars-template">
+<ul>
+	<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
+	{{#each entries}}
+		<li class="list-group-item myitem">
+			<small><a href="#collapse-{{id}}" data-toggle="collapse"><span class="glyphicon glyphicon-plus"></span></a></small>
+			<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
+			<div id="collapse-{{id}}" class="collapse"><small>{{contentSnippet}}</small></div>
+		</li>
+	{{/each}}
+</ul>
+</script>
 
+<script id="feed_compact-template" type="text/x-handlebars-template">
+<ul>
+	<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
+	{{#each entries}}
+		<li class="list-group-item myitem">
+			<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
+		</li>
+	{{/each}}
+</ul>
+</script>
 
+<script type="text/javascript">
+	// setup and config
+	var feed_hbs = Handlebars.compile(document.getElementById('feed-template').innerHTML);
+	var feed_compact_hbs = Handlebars.compile(document.getElementById('feed_compact-template').innerHTML);
 
-
-<script type="text/javascript" charset="utf-8">
-function go() {
-	$columns = 4;
-	$sources = [
+	var sources = [
 		// organization
                 {"url": "https://isc.sans.edu/rssfeed_full.xml"},
-                {"url": "https://news.ycombinator.com/rss", "template": "#feed-template-compact", "items": 20},
+                {"url": "https://news.ycombinator.com/rss", "template": feed_compact_hbs, "items": 20},
                 {"url": "https://www.debian.org/security/dsa-long"},
                 {"url": "https://www.exploit-db.com/rss.xml"},
                 {"url": "https://www.csirt.cz/rss/news/security/"},
@@ -124,56 +147,56 @@ function go() {
                 {"url": "https://twitrss.me/twitter_user_to_rss/?user=taviso"}
 	];
 
-	$handles = [];
-	$outs = [];
-	for($i = 0; $i < $sources.length; $i++) {
-		$outs.push( '<div class="col-md-'+ (12/$columns) +'"><div id="'+ "rssX"+$i +'">loading '+$sources[$i]["url"]+'</div></div>' );
+	// code
+	class Afeed {
+		constructor(url, panel_id, template_cb, items) {
+			this.url = url;
+			this.panel_id = panel_id;
+			this.template_cb = template_cb;
+			this.items = items;
+		}
+
+		get_element(cols) {
+			return $('<div class="col-md-'+ (12/cols) +'" id="' + this.panel_id +'">loading ' + this.url + '</div>');
+		}
+
+		init() {
+			feednami.loadGoogleFormat(this.url, $.proxy(this.render, this));
+		}
+
+		render(data) {
+			data.feed.entries = data.feed.entries.slice(0, this.items);
+			for(var i=0; i < data.feed.entries.length; i++){
+				data.feed.entries[i].pDate = data.feed.entries[i].publishedDate ? new Date(data.feed.entries[i].publishedDate).toJSON().substr(0,16) : "";
+				data.feed.entries[i].id = Math.random().toString(36).substring(2);
+			}
+			$('#'+this.panel_id).html(this.template_cb(data.feed));
+		}
 	}
-	while( $outs.length > 0 ) {
-		$('<div class="row">'+ $outs.splice(0, $columns ).join("") +'</div>').appendTo("#allfeeds");
-	}
 
-	for($i = 0; $i < $sources.length; $i++) {
-		$outputdiv = "rssX"+$i;
-		$handles[$i] = new HandlebaRss($sources[$i]["url"], (  $sources[$i]["template"] || "#feed-template"), "#"+$outputdiv, 0, ($sources[$i]["items"]||10));
-		$handles[$i].init();
-	}
+	$(document).ready(function() {
+		feednami.setPublicApiKey('563940caaf44f6ff5659959d16af487232d827336b20e60d8ddecbf38a10e505');
+		var columns = 4;
+		var id = 0;
 
-}
+		for (var i = 0; i < sources.length; i += columns) {
+			var row = $('<div class="row"></div>');
+			row.appendTo('#allfeeds');
 
-
-$(document).ready(go);
+			sources.slice(i, i + columns).forEach(function(source) {
+				var afeed = new Afeed(source.url, 'rssX' + id, source.template || feed_hbs, source.items || 10);
+				afeed.get_element(columns).appendTo(row);
+				afeed.init();
+				id++;
+			});
+		}
+	});
 </script>
-
-<script id="feed-template" type="text/x-handlebars-template">
-	<ul>
-		<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
-		{{#each entries}}
-			<li class="list-group-item myitem">
-				<small><a href="#collapse-{{id}}" data-toggle="collapse"><span class="glyphicon glyphicon-plus"></span></a></small>
-				<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
-				<div id="collapse-{{id}}" class="collapse"><small>{{contentSnippet}}</small></div>
-			</li>
-		{{/each}}
-	</ul>
-</script>
-
-<script id="feed-template-compact" type="text/x-handlebars-template">
-	<ul>
-		<li class="list-group-item myhead"><a href="{{feedUrl}}" target="_blank" >{{title}}</a></li>
-		{{#each entries}}
-			<li class="list-group-item myitem">
-				<a href="{{link}}" target="_blank">{{title}}</a><span class="pull-right small pdate">{{pDate}}</span>
-			</li>
-		{{/each}}
-	</ul>
-</script>
-
 
 <nav class="navbar navbar-default">
 	<div class="container">
         	<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -189,25 +212,23 @@ $(document).ready(go);
 		</div><!--/.nav-collapse -->
 	</div>
 </nav>
+
 <div class="container-fluid"> <!-- like main content container ??? -->
 
 	<div id="allfeeds">
 	</div>
 
 	<div class="jumbotron" id="about">
-		<h2>#ccao rss feeds</h2>
-	        <p class="lead">
-		Stay up-to-date ... IRCNet #ccao
+		<h2>Freenode#ccao and FLAB Cesnet RSS aggregator.</2>
+
 		<h3>Acknowledgement</h3>
-		<p>
-		Computational resources were provided by the MetaCentrum under the program
-		LM2010005 and the CERIT-SC under the program Centre CERIT Scientific Cloud,
-		part of the Operational Program Research and Development for Innovations, Reg.
-		no. CZ.1.05/3.2.00/08.0144.
-		</p>
+
+		<div>MetaCentrum.CZ for initial computing resources for development.</div>
+		<div>sekando.com for feednami api used to convert RSS to JSON (https://toolkit.sekando.com/).</div>
 	</div>
 
 </div> <!-- like main content container ??? -->
 
 </body>
+
 </html>
