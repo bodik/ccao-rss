@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>CT Trace — Certificate Transparency monitor</title>
+  <style>
+    :root { --paper:#f5f5f1; --surface:#fff; --ink:#202923; --muted:#6a736c; --line:#d6dbd4; --accent:#216545; --soft:#e5efe6; --warning:#846126; --danger:#a44334; --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,Helvetica,sans-serif; line-height:1.5; }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    button:focus-visible,input:focus-visible,summary:focus-visible { outline:3px solid #94b9a0; outline-offset:3px; }
+    .masthead { border-bottom:1px solid var(--line); padding:24px clamp(20px,4vw,60px); display:flex; gap:24px; justify-content:space-between; align-items:center; }
+    .wordmark { display:flex; align-items:center; gap:14px; }
+    .wordmark-icon { display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--ink); border-radius:50%; font:600 14px var(--mono); }
+    h1 { font:500 25px Georgia,serif; margin:0; letter-spacing:-.5px; }
+    .subtitle { margin:2px 0 0; font-size:12px; color:var(--muted); }
+    .source-link { color:var(--ink); font-size:13px; text-underline-offset:4px; }
+    .workspace { max-width:1440px; margin:auto; padding:42px clamp(20px,4vw,60px) 48px; display:grid; grid-template-columns:minmax(280px,340px) minmax(0,1fr); gap:clamp(32px,5vw,70px); }
+    label { display:block; font-size:13px; font-weight:600; margin:26px 0 8px; }
+    label:first-of-type { margin-top:28px; }
+    input { width:100%; padding:11px 12px; background:var(--surface); border:1px solid #bfc8bf; border-radius:4px; color:var(--ink); font-family:var(--mono); font-size:13px; }
+    input:disabled { background:#e8eae6; color:#71766f; }
+    .hint { font-size:12px; color:var(--muted); margin:8px 0 0; }
+    .section-label { font:12px var(--mono); letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+    .button-primary { width:100%; margin-top:28px; min-height:46px; border:1px solid var(--ink); border-radius:4px; padding:12px 18px; background:var(--ink); color:#fff; font-weight:600; }
+    .button-primary:hover { background:var(--accent); border-color:var(--accent); }
+    .button-primary.running { color:var(--danger); background:transparent; border-color:var(--danger); }
+    .button-primary.running:hover { background:#f8e9e3; }
+    .text-button { border:0; background:none; color:var(--muted); text-decoration:underline; text-underline-offset:3px; font-size:12px; padding:10px 0; }
+    .text-button:hover { color:var(--ink); }
+    .demo-button { display:block; margin:10px auto 0; }
+    .status { margin-top:30px; padding-top:25px; border-top:1px solid var(--line); }
+    .status-line { display:flex; align-items:center; gap:9px; font-size:14px; font-weight:600; }
+    .dot { width:8px; height:8px; border-radius:50%; background:#91978e; flex-shrink:0; }
+    .dot.online { background:var(--accent); }
+    .dot.waiting { background:#b78b36; }
+    .dot.error { background:var(--danger); }
+    #statusDetail { color:var(--muted); font-size:13px; margin:7px 0 0 17px; overflow-wrap:anywhere; }
+    .feed-heading { display:flex; justify-content:space-between; align-items:baseline; gap:15px; border-bottom:1px solid var(--ink); padding-bottom:18px; }
+    h2 { font:400 29px Georgia,serif; margin:0; letter-spacing:-.6px; }
+    .count { color:var(--muted); font:12px var(--mono); white-space:nowrap; }
+    .feed-tools { display:flex; gap:22px; justify-content:flex-end; }
+    .feed { list-style:none; padding:0; margin:0; }
+    .alert { padding:25px 0 24px; border-bottom:1px solid var(--line); animation:appear .2s ease-out; }
+    .alert-top { display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .term { display:inline-block; font:11px var(--mono); color:var(--accent); background:var(--soft); border-radius:3px; padding:3px 7px; margin-right:5px; }
+    .term.demo { color:var(--warning); background:#f3ecdd; }
+    .alert-time { color:var(--muted); font:11px var(--mono); white-space:nowrap; }
+    .domain { font:16px var(--mono); overflow-wrap:anywhere; margin:15px 0 12px; }
+    .domain + .domain { margin-top:-5px; }
+    .alert-footer { display:flex; align-items:center; gap:18px; }
+    .alert-source { color:var(--muted); font-size:12px; flex:1; overflow-wrap:anywhere; }
+    .copy { background:none; border:0; color:var(--muted); font-size:11px; padding:6px; white-space:nowrap; }
+    .copy:hover { color:var(--ink); text-decoration:underline; }
+    .empty { padding:44px 0 20px; }
+    .empty h3 { font-size:17px; font-weight:500; margin:0 0 9px; }
+    .empty p { font-size:14px; color:var(--muted); max-width:520px; margin:0; }
+    .footnote { font-size:12px; color:var(--muted); margin:35px 0 0; max-width:700px; }
+    .footnote summary { cursor:pointer; display:inline; }
+    .footnote p { margin:12px 0 0; }
+    .toast { position:fixed; bottom:25px; left:50%; transform:translateX(-50%); color:#fff; background:var(--ink); padding:12px 18px; border-radius:4px; font-size:13px; opacity:0; pointer-events:none; transition:opacity .15s; }
+    .toast.visible { opacity:1; }
+    @keyframes appear { from { opacity:.2; } to { opacity:1; } }
+    @media (max-width:760px) {
+      .masthead { padding:20px; }
+      .source-link { display:none; }
+      .workspace { grid-template-columns:1fr; padding:28px 20px; gap:40px; }
+      .configuration { padding-bottom:4px; }
+      .button-primary,.text-button,.copy { min-height:44px; }
+      .alert-top { align-items:flex-start; flex-direction:column; gap:9px; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wordmark"><span class="wordmark-icon" aria-hidden="true">CT</span><div><h1>CT Trace</h1><p class="subtitle">Certificate Transparency, selectively watched.</p></div></div>
+    <a class="source-link" href="https://certstream.calidog.io/" target="_blank" rel="noopener noreferrer">CertStream public feed ↗</a>
+  </header>
+  <main class="workspace">
+    <section class="configuration" aria-label="Monitor configuration">
+      <span class="section-label">01 / Configure</span>
+      <form id="config">
+        <label for="terms">Domain contains</label>
+        <input id="terms" name="terms" value="2shell, 2root" autocomplete="off" spellcheck="false" required aria-describedby="termsHint">
+        <p id="termsHint" class="hint">Any substring matches. Separate alternatives with commas or spaces.</p>
+        <label for="endpoint">Stream endpoint</label>
+        <input id="endpoint" name="endpoint" value="wss://certstream.calidog.io/" autocomplete="off" spellcheck="false" required aria-describedby="endpointHint">
+        <p id="endpointHint" class="hint">Native browser WebSocket. No API key or library required.</p>
+        <button id="toggle" class="button-primary" type="submit">Start monitoring</button>
+        <button id="demo" class="text-button demo-button" type="button">Insert demo event</button>
+      </form>
+      <div class="status" role="status" aria-live="polite">
+        <div class="status-line"><span id="dot" class="dot"></span><span id="status">Idle</span></div>
+        <p id="statusDetail">Configure your filters, then start monitoring.</p>
+      </div>
+      <details class="footnote"><summary>About this monitor</summary><p>Matches common names and SAN entries from <code>all_domains</code>, case-insensitively. Matching is literal—not an exact registered-domain check. Alerts stay in this tab’s memory (last 100 only). The tab must remain open; use a server process for unattended or durable monitoring. This tracks public certificate issuance, not network traffic.</p></details>
+    </section>
+    <section aria-label="Matching certificates">
+      <div class="feed-heading"><h2>Matching certificates</h2><span id="count" class="count">0 this session</span></div>
+      <div class="feed-tools"><button id="export" class="text-button" type="button" disabled>Export JSONL</button><button id="clear" class="text-button" type="button" disabled>Clear</button></div>
+      <div id="empty" class="empty"><h3>Nothing matched yet.</h3><p>Start the monitor to watch incoming certificates. No match appearing is a normal result, not a connection error.</p></div>
+      <ol id="alerts" class="feed"></ol>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <noscript>This application requires JavaScript and a browser with WebSocket support.</noscript>
+  <script id="core">
+    (() => {
+      "use strict";
+      function matchingDomains(message, terms) {
+        if (!message || message.message_type !== "certificate_update") return [];
+        const domains = message.data?.leaf_cert?.all_domains;
+        if (!Array.isArray(domains)) return [];
+        const normalized = domains.filter(d => typeof d === "string").map(d => [d, d.toLowerCase()]);
+        return terms.map(term => [term, normalized.filter(([, name]) => name.includes(term.toLowerCase())).map(([domain]) => domain)]).filter(([, domains]) => domains.length > 0);
+      }
+      function createAlert(message, matches, demo = false) {
+        const seen = message.data?.seen;
+        const date = typeof seen === "number" && Number.isFinite(seen) ? new Date(seen * 1000) : new Date();
+        return {
+          received_at: new Date().toISOString(),
+          seen: isNaN(date.getTime()) ? null : date.toISOString(),
+          matched_terms: matches.map(([term]) => term),
+          matched_domains: [...new Set(matches.flatMap(([, domains]) => domains))].sort(),
+          log: message.data?.source?.name ?? null,
+          demo
+        };
+      }
+      function parseTerms(value) {
+        return [...new Set(value.split(/[\s,]+/).map(term => term.trim()).filter(Boolean))];
+      }
+      function validateEndpoint(value) {
+        try { const url = new URL(value); return url.protocol === "wss:" || (url.protocol === "ws:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)); }
+        catch { return false; }
+      }
+      window.CTMonitor = { matchingDomains, createAlert, parseTerms, validateEndpoint };
+    })();
+  </script>
+  <script id="app">
+    (() => {
+      "use strict";
+      const $ = id => document.getElementById(id);
+      const {matchingDomains, createAlert, parseTerms, validateEndpoint} = window.CTMonitor;
+      const config = $("config"), termsInput = $("terms"), endpointInput = $("endpoint");
+      const alerts = [], limit = 100;
+      let socket = null, reconnectTimer = null, watchdogTimer = null, toastTimer = null;
+      let running = false, attempt = 0, generation = 0, hasActivity = false;
+
+      function status(text, detail, mode = "") {
+        $("status").textContent = text;
+        $("statusDetail").textContent = detail;
+        $("dot").className = `dot ${mode}`;
+      }
+      function notify(text) {
+        clearTimeout(toastTimer); $("toast").textContent = text; $("toast").classList.add("visible");
+        toastTimer = setTimeout(() => $("toast").classList.remove("visible"), 2600);
+      }
+      function setConfigurationLocked(locked) {
+        termsInput.disabled = locked; endpointInput.disabled = locked;
+        $("toggle").textContent = locked ? "Stop monitoring" : "Start monitoring";
+        $("toggle").classList.toggle("running", locked);
+        $("demo").disabled = locked;
+      }
+      function make(text, tag = "div", className = "") {
+        const el = document.createElement(tag); el.textContent = text; if (className) el.className = className; return el;
+      }
+      function render(alert) {
+        const entry = document.createElement("li"); entry.className = "alert";
+        const top = document.createElement("div"); top.className = "alert-top";
+        const terms = document.createElement("div");
+        for (const term of alert.matched_terms) { const tag = make(alert.demo ? `${term} · demo` : term, "span", `term${alert.demo ? " demo" : ""}`); terms.appendChild(tag); }
+        top.appendChild(terms);
+        top.appendChild(make(new Date(alert.received_at).toLocaleString(), "time", "alert-time"));
+        entry.appendChild(top);
+        for (const domain of alert.matched_domains) entry.appendChild(make(domain, "div", "domain"));
+        const footer = document.createElement("div"); footer.className = "alert-footer";
+        footer.appendChild(make(alert.log || "Unspecified CT log", "span", "alert-source"));
+        const copy = make("Copy JSON", "button", "copy"); copy.type = "button";
+        copy.addEventListener("click", async () => {
+          try { await navigator.clipboard.writeText(JSON.stringify(alert)); notify("Alert copied as JSON."); }
+          catch { notify("Clipboard unavailable; use Export JSONL instead."); }
+        });
+        footer.appendChild(copy); entry.appendChild(footer);
+        $("alerts").prepend(entry);
+        $("empty").hidden = true;
+        let count = alerts.length;
+        $("count").textContent = count === 1 ? "1 this session" : `${count} retained (max ${limit})`;
+        for (const id of ["export", "clear"]) $(id).disabled = false;
+      }
+      function addAlert(alert) {
+        alerts.unshift(alert); if (alerts.length > limit) alerts.pop();
+        render(alert); if (alerts.length === limit) $("alerts").lastElementChild?.remove();
+      }
+      function demo() {
+        const terms = parseTerms(termsInput.value);
+        if (!terms.length) return notify("Enter at least one substring first.");
+        const event = {message_type:"certificate_update", data:{seen:Date.now()/1000, source:{name:"Synthetic demo — not a certificate event"}, leaf_cert:{all_domains:[`demo.${terms[0]}.example`, ...terms.slice(1).map(t => `www.${t}.example`), "unrelated.example"]}}};
+        addAlert(createAlert(event, matchingDomains(event, terms), true));
+        notify("Synthetic demo added; no stream connection was made.");
+      }
+      function markActivity() {
+        if (!hasActivity) status("Live stream active", "Certificate messages received; only matches are shown.", "online");
+        hasActivity = true;
+      }
+      function resetWatchdog() {
+        clearTimeout(watchdogTimer);
+        watchdogTimer = setTimeout(() => {
+          if (!running) return;
+          status("Reconnecting", "No WebSocket messages for 30 seconds; recycling the connection.", "waiting");
+          socket?.close();
+        }, 30000);
+      }
+      function scheduleReconnect() {
+        if (!running) return;
+        clearTimeout(reconnectTimer);
+        const wait = Math.min(30000, 1000 * (2 ** Math.min(attempt, 5)));
+        attempt++;
+        status("Reconnecting", `Connection closed. Next attempt in ${Math.ceil(wait / 1000)} s.`, "waiting");
+        reconnectTimer = setTimeout(connect, wait);
+      }
+      function connect() {
+        if (!running) return;
+        clearTimeout(reconnectTimer);
+        const current = generation;
+        hasActivity = false;
+        status("Connecting", "Opening a browser-native WebSocket connection.", "waiting");
+        const ws = new WebSocket(endpointInput.value); socket = ws;
+        ws.addEventListener("open", () => {
+          if (current !== generation || !running) return;
+          attempt = 0; resetWatchdog();
+          status("Connected; waiting for data", "The transport is open. Waiting for a heartbeat or certificate.", "online");
+        });
+        ws.addEventListener("message", event => {
+          if (current !== generation || !running) return;
+          markActivity(); resetWatchdog();
+          try {
+            const message = JSON.parse(event.data);
+            const matches = matchingDomains(message, parseTerms(termsInput.value));
+            if (matches.length) addAlert(createAlert(message, matches));
+          } catch { /* Ignore malformed upstream frames without killing the stream. */ }
+        });
+        ws.addEventListener("error", () => {
+          if (current !== generation || !running) return;
+          status("Connection error", "The browser could not communicate with the endpoint. It will retry or close.", "error");
+        });
+        ws.addEventListener("close", event => {
+          if (current !== generation) return;
+          clearTimeout(watchdogTimer);
+          if (running) scheduleReconnect();
+          else status("Stopped", event.wasClean ? "Monitoring stopped. Alerts remain available to export." : "Monitoring stopped after a connection interruption.", "");
+        });
+      }
+      function start() {
+        const terms = parseTerms(termsInput.value);
+        if (!terms.length) return notify("Enter at least one substring to watch.");
+        if (!validateEndpoint(endpointInput.value.trim())) return notify("Use a wss:// URL (or ws:// only for localhost).");
+        endpointInput.value = endpointInput.value.trim();
+        running = true; generation++; attempt = 0; setConfigurationLocked(true); connect();
+        try { localStorage.setItem("ct-trace-terms", termsInput.value); } catch { /* Persistence is optional. */ }
+        try { localStorage.setItem("ct-trace-endpoint", endpointInput.value); } catch { /* Persistence is optional. */ }
+      }
+      function stop() {
+        running = false; generation++; clearTimeout(reconnectTimer); clearTimeout(watchdogTimer);
+        setConfigurationLocked(false);
+        if (socket && socket.readyState < WebSocket.CLOSING) {
+          status("Stopped", "Monitoring stopped. Alerts remain available to export.");
+          socket.close(1000, "Stopped by user");
+        } else status("Stopped", "Monitoring stopped. Alerts remain available to export.");
+      }
+      config.addEventListener("submit", event => { event.preventDefault(); running ? stop() : start(); });
+      $("demo").addEventListener("click", demo);
+      $("clear").addEventListener("click", () => {
+        alerts.length = 0; $("alerts").replaceChildren(); $("empty").hidden = false;
+        $("count").textContent = "0 this session"; $("export").disabled = true; $("clear").disabled = true;
+      });
+      $("export").addEventListener("click", () => {
+        const text = alerts.slice().reverse().map(alert => JSON.stringify(alert)).join("\n") + "\n";
+        const url = URL.createObjectURL(new Blob([text], {type:"application/x-ndjson"}));
+        const link = document.createElement("a"); link.href = url; link.download = `ct-trace-${new Date().toISOString().slice(0,10)}.jsonl`;
+        document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+        notify("JSONL export created.");
+      });
+      try { const saved = localStorage.getItem("ct-trace-terms"); if (saved !== null) termsInput.value = saved; } catch { /* Storage is optional. */ }
+      try { const saved = localStorage.getItem("ct-trace-endpoint"); if (saved !== null) endpointInput.value = saved; } catch { /* Storage is optional. */ }
+    })();
+  </script>
+</body>
+</html>
